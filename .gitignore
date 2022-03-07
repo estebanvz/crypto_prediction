@@ -1,3 +1,4 @@
 datasets/
 .env
-main.py
+*.h5
+logs/
