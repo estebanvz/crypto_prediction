@@ -2,3 +2,5 @@ datasets/
 .env
 *.h5
 logs/
+main.py
+src/crypto_prediction/__pycache__/__init__.cpython-38.pyc

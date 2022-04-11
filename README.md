@@ -16,11 +16,11 @@
     <img src="https://avatars.githubusercontent.com/u/65377832?s=400&u=12c57a2350bcd69068ced71f630ca0d5559e6621&v=4)}" alt="Logo" width="80" height="80" style="border-radius:100%">
   </a>
 
-  <h3 align="center"> Crypto Coin Metrics Transformation - Python Package
+  <h3 align="center"> Crypto Price Prediction Pipeline - Python Package
 </h3>
 
   <p align="center">
-    Python Package focused on transform crypto prices datasets extracted from Binance API.
+    Python Package to create a pipeline for price prediction using a keras neural network model.
     <br />
     <!-- <a href="https://github.com/estebanvz/crypto_prediction"><strong>Explore the docs »</strong></a>
     <br /> -->
@@ -66,8 +66,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Package
 
-This is a small package to download the prices of cryptos using Binance API.
-
+This is a small package to produce pipelines to predict the btc price using keras neural networks.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -77,7 +76,10 @@ This is a small package to download the prices of cryptos using Binance API.
 This project was builded with the next technologies.
 
 * [Python](https://python.org/)
-
+* [Keras](https://keras.io/)
+* [Tensorflow](https://www.tensorflow.org/)
+* [Scikit-learn](https://scikit-learn.org/)
+* [Jupyter](https://jupyter.org/)
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -139,17 +141,39 @@ Also you could download the package **crypo_price** to download data from Binanc
 [Crypto Price Package](https://github.com/estebanvz/crypto_price)
 ```python
 import os
-from decouple import config
-from crypto_price import CryptoDataExtractor
-from crypto_prediction import CryptoDataTransformation
-API_KEY = config("API_KEY")
-API_SECRET = config("API_SECRET")
-extractor = CryptoDataExtractor()
-extractor.from_binance(api_key=API_KEY,api_secret=API_SECRET,time_in_hours=24*10)
-transformer = CryptoDataTransformation()
-transformer.readDataset()
+import keras
+from crypto_prediction import CryptoPredictor
+
+c_predictor = CryptoPredictor(time_interval="1d")
+c_predictor.download_crypto_dataset()
+c_predictor.calculate_metrics()
+c_predictor.load_dataset(path="datasets/1d/BTCUSDT.csv")
+c_predictor.lag_variables(n_lags=60)
+c_predictor.calculate_labels(n_times_future=5)
+## To train a new model you can use split and normalize dataset function
+# x_train_n, x_test_n, y_train, y_test = c_predictor.normalize_split_dataset(split_data=100)
+regressor = keras.models.load_model("btcusdt1d0.039mae.h5")
+c_predictor.set_keras_model(keras_model=regressor)
+c_predictor.draw_prediction(x_test_n=x_test_n,n_future_steps=2)
 
 ```
+### Predicción
+
+![Prediction](./prediction.png "Prediction")
+
+The black line is the real price and the green dotted lines are the prediction made by the algorithm.
+
+### Real price
+![Prediction2](./prediction2.png "Real Price")
+
+The real price on tradingview show us that the prediction of the algorithm was accurate.
+## Results
+
+We can observe how the algorithm developed to test this pipeline produce a prediction of one day in the future that predict a range.
+The real price movement the next day was too close to the prediction of the algorithm.
+
+It is needed more research in this algorithm to produce better results.
+The algorithm evaluated in this model produces a MAE of 0.021 in 100 days test dataset.
 
 <!-- USAGE EXAMPLES
 ## Usage
